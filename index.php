@@ -1,3 +1,24 @@
+<?php 
+    include "db_connect.php";
+
+    $db = new connect_db();
+
+    if(isset($_POST['submit'])){
+        $full_name = $_POST['full_name'];
+        $email = $_POST['email'];
+        $contact = $_POST['contact'];
+        $date_of_birth = $_POST['date_of_birth'];
+        $address = $_POST['address'];
+
+        if(isset($_FILES['image']['tmp_name'])){
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $terget = "image/.";
+        }
+
+    }
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,6 +38,14 @@
     <!-- Form Section -->
     <div class="form-container">
         <h2 class="text-center"> Contact Form</h2>
+        <div class="row">
+            <samp>
+            <?php if(isset($_GET['msg'])){
+                    echo "" .$_GET['msg'];
+                }
+            ?>
+            </samp>
+        </div>
         <form action="#" method="POST" enctype="multipart/form-data">
             <div class="row">
                 <!-- Name Field -->
@@ -41,7 +70,7 @@
 
                 <!-- Age Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="number" class="form-control" id="age" name="age" placeholder="Age" required>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="address" required>
                 </div>
                 <!-- File Upload Field -->
                 <div class="col-md-6 mb-3">
