@@ -1,21 +1,7 @@
 <?php 
     include "db_connect.php";
 
-    $db = new connect_db();
-
-    if(isset($_POST['submit'])){
-        $full_name = $_POST['full_name'];
-        $email = $_POST['email'];
-        $contact = $_POST['contact'];
-        $date_of_birth = $_POST['date_of_birth'];
-        $address = $_POST['address'];
-
-        if(isset($_FILES['image']['tmp_name'])){
-            $tmp_name = $_FILES['image']['tmp_name'];
-            $terget = "image/.";
-        }
-
-    }
+   
 ?>
 
 
@@ -50,7 +36,7 @@
             <div class="row">
                 <!-- Name Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
+                    <input type="text" class="form-control" id="name" name="full_name" placeholder="Full Name" required>
                 </div>
 
                 <!-- Email Field -->
@@ -60,12 +46,12 @@
 
                 <!-- Phone Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="number" class="form-control" id="phone" name="phone" placeholder="Phone Number" required>
+                    <input type="number" class="form-control" id="phone" name="contact" placeholder="Phone Number" required>
                 </div>
 
                 <!-- Date of Birth Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="date" class="form-control" id="dob" name="dob" placeholder="Date of Birth" required>
+                    <input type="date" class="form-control" id="dob" name="date_of_birth" placeholder="Date of Birth" required>
                 </div>
 
                 <!-- Age Field -->
@@ -74,15 +60,15 @@
                 </div>
                 <!-- File Upload Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="file" class="form-control" id="file" name="file" accept="image/*" placeholder="Upload Image" required>
+                    <input type="file" class="form-control" id="file" name="image" accept="image/*" placeholder="Upload Image" required>
                 </div>
                 <!-- Message Field -->
                 <div class="col-md-6 mb-3">
-                    <textarea class="form-control" id="message" name="message" rows="2" placeholder="Message" required></textarea>
+                    <textarea class="form-control" id="message" name="message_note" rows="2" placeholder="Message" required></textarea>
                 </div>
                 <!-- Submit Button aligned to the right -->
                 <div class="col-md-6 text-end mt-4">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" name="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
