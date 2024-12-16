@@ -2,6 +2,50 @@
     include "db_connect.php";
 
    
+    $db = new connect_db();
+
+    if (isset($_POST['submit'])) {
+        $full_name = $_POST['full_name'];
+        $email = $_POST['email'];
+        $contact = $_POST['contact'];
+        $date_of_birth = $_POST['date_of_birth'];
+        $address = $_POST['address'];
+        $message_note = $_POST['message_note'];
+
+        $image = "";
+        if (isset($_FILES['image']['tmp_name'])) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $target = "images";
+            $name = basename($_FILES['image']['name']);
+            $image = $name;
+
+            // Move the uploaded file
+            if (!move_uploaded_file($tmp_name, "$target/$name")) {
+                die("Failed to upload image.");
+            }
+        }
+
+        if ($full_name == "" || $email == "") {
+            echo "Fields must not be empty.";
+        } else {
+        
+            $insert_Data = "
+            INSERT INTO user_info (full_name, email, contact, date_of_birth, address, image, message_note) 
+            VALUES ('$full_name', '$email', '$contact', '$date_of_birth', '$address', '$image', '$message_note')";
+
+            // Call the insert method
+            $db->inserted($insert_Data);
+        }
+    }
+    // Create an object of connect_db
+    $db = new connect_db();
+
+    // SQL query
+    $query = "SELECT * FROM user_info";
+
+    // Fetch data
+    $view_data = $db->selects($query);
+
 ?>
 
 
@@ -87,57 +131,63 @@
             <table class="table table-striped table-hover table-bordered">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Date of Birth</th>
-                        <th>Age</th>
+                        <th>Address</th>
                         <th>Message</th>
                         <th>Image</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>John Doe</td>
-                        <td>john.doe@example.com</td>
-                        <td>+1234567890</td>
-                        <td>1990-01-01</td>
-                        <td>34</td>
-                        <td>Hello, I have a question.</td>
-                        <td><img src="https://via.placeholder.com/50" alt="Uploaded Image" class="uploaded-image"></td>
-                        <td>
-                            <button class="btn btn-success btn-sm me-1">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button class="btn btn-primary btn-sm me-1">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Jane Smith</td>
-                        <td>jane.smith@example.com</td>
-                        <td>+0987654321</td>
-                        <td>1985-05-15</td>
-                        <td>39</td>
-                        <td>I need help with the order.</td>
-                        <td><img src="https://via.placeholder.com/50" alt="Uploaded Image" class="uploaded-image"></td>
-                        <td>
-                            <button class="btn btn-success btn-sm me-1">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button class="btn btn-primary btn-sm me-1">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+
+
+                <?php 
+                
+                if (!empty($view_data)) {
+                    while ($row = $view_data->fetch_assoc()) {
+                ?>                
+                <tr>
+                    <td><?php echo $row['id']; ?></td>
+                    <td><?php echo $row['full_name']; ?></td>
+                    <td><?php echo $row['email']; ?></td>
+                    <td><?php echo $row['contact']; ?></td>
+                    <td><?php echo $row['date_of_birth']; ?></td>
+                    <td><?php echo $row['address']; ?></td>
+                    <td>
+                        <?php 
+                            $message = $row['message_note'];
+                            echo strlen($message) > 25 ? substr($message, 0, 25) . "..." : $message; 
+                        ?>
+                    </td>
+                    <td>
+                        <img src="images/<?php echo $row['image']; ?>" alt="User Image" width="50" height="50">
+                    </td>
+
+                    
+
+                    <td>
+                        <button class="btn btn-success btn-sm me-1">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-primary btn-sm me-1">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <?php 
+                    }
+                } else {
+                    echo "<tr><td colspan='8' class='text-center'>No records found.</td></tr>";
+                }
+                ?>
+                   
                 </tbody>
             </table>
         </div>
