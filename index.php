@@ -37,14 +37,20 @@
             $db->inserted($insert_Data);
         }
     }
-    // Create an object of connect_db
+
+    //select data from database 
     $db = new connect_db();
-
-    // SQL query
     $query = "SELECT * FROM user_info";
-
-    // Fetch data
     $view_data = $db->selects($query);
+
+
+    // view data for edit 
+    if(isset($_GET['edit'])){
+        $id = $_GET['edit'];
+        $db = new connect_db();
+        $query = "SELECT * FROM user_info WHERE id = $id";
+        $data = $db->editData($query)->fetch_assoc();
+    }
 
 ?>
 
@@ -80,35 +86,36 @@
             <div class="row">
                 <!-- Name Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" id="name" name="full_name" placeholder="Full Name" required>
+                    <input type="text" class="form-control" value="<?php if(isset($_GET['edit'])) echo $data['full_name']; ?>" id="name" name="full_name" placeholder="Full Name" required>
+                    <input type="hidden" value="<?php if(isset($_GET['edit'])) echo $data['id']; ?>" name="id">
                 </div>
 
                 <!-- Email Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+                    <input type="email" class="form-control" value="<?php if(isset($_GET['edit'])) echo $data['email']; ?>" id="email" name="email" placeholder="Email Address" required>
                 </div>
 
                 <!-- Phone Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="number" class="form-control" id="phone" name="contact" placeholder="Phone Number" required>
+                    <input type="number" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['contact']; ?>" id="phone" name="contact" placeholder="Phone Number" required>
                 </div>
 
                 <!-- Date of Birth Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="date" class="form-control" id="dob" name="date_of_birth" placeholder="Date of Birth" required>
+                    <input type="date" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['date_of_birth']; ?>" id="dob" name="date_of_birth" placeholder="Date of Birth" required>
                 </div>
 
                 <!-- Age Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" id="address" name="address" placeholder="address" required>
+                    <input type="text" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['address']; ?>" id="address" name="address" placeholder="address" required>
                 </div>
                 <!-- File Upload Field -->
                 <div class="col-md-6 mb-3">
-                    <input type="file" class="form-control" id="file" name="image" accept="image/*" placeholder="Upload Image" required>
+                    <input type="file" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['image']; ?>" id="file" name="image" accept="image/*" placeholder="Upload Image" required>
                 </div>
                 <!-- Message Field -->
                 <div class="col-md-6 mb-3">
-                    <textarea class="form-control" id="message" name="message_note" rows="2" placeholder="Message" required></textarea>
+                    <textarea class="form-control" id="message" name="message_note" rows="2" placeholder="Message" required><?php if(isset($_GET['edit'])) echo $data['message_note']; ?></textarea>
                 </div>
                 <!-- Submit Button aligned to the right -->
                 <div class="col-md-6 text-end mt-4">
@@ -166,19 +173,15 @@
                     <td>
                         <img src="images/<?php echo $row['image']; ?>" alt="User Image" width="50" height="50">
                     </td>
-
-                    
-
                     <td>
-                        <button class="btn btn-success btn-sm me-1">
+                       <a href="index.php?edit=<?php echo $row['id']; ?>"  class="btn btn-success btn-sm me-1">
                             <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-primary btn-sm me-1">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                       </a>
+                       <a href="index.php?viewProfile<?php echo $row['id']; ?>"  class="btn btn-primary btn-sm me-1"> <i class="bi bi-eye"></i></a>
+                       <a href="index.php?delete<?php echo $row['id']; ?>"  class="btn btn-danger btn-sm">
+                         <i class="bi bi-trash"></i>
+                        </a>
+                       
                     </td>
                 </tr>
                 <?php 
