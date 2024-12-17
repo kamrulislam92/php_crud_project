@@ -11,25 +11,15 @@ class connect_db {
         }
     }
 
+    // insert data in database 
     public function inserted($data) {
         $result = $this->connect->query($data);
-        // if ($result) {
-        //     echo "Data inserted successfully!";
-        // } else {
-        //     echo "Data insertion failed: " . $this->connect->error;
-        // }
+        if($result){
+            header("Location: index.php?msg=".urlencode('Data inserted successfully done'));
+         }
     }
-    // public function select($data) {
-    //     $result = $this->connect->query($data);
-    
-    //     // Check for query errors
-    //     if (!$result) {
-    //         die("Query error: " . $this->connect->error);
-    //     }
-    
-    //     // Return results or an empty array
-    //     return $result->num_rows > 0 ? $result : [];
-    // }
+
+    // view data in table 
     public function selects($data){
         $result = $this->connect->query($data);
         if($result->num_rows> 0){
@@ -48,6 +38,14 @@ class connect_db {
             return false;
         }
     }
+
+    // update data for function
+    public function updateData($updateD){
+        $result = $this->connect->query($updateD);
+        if($result){
+           header("Location: index.php?msg=".urlencode('Data upadeted successfully done'));
+        }
+    } 
 }
 
 

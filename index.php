@@ -51,7 +51,24 @@
         $query = "SELECT * FROM user_info WHERE id = $id";
         $data = $db->editData($query)->fetch_assoc();
     }
+    
+    // update data
+    if(isset($_POST['update'])){
+                   $id = $_POST['id'];
+            $full_name = $_POST['full_name'];
+                $email = $_POST['email'];
+              $contact = $_POST['contact'];
+        $date_of_birth = $_POST['date_of_birth'];
+              $address = $_POST['address'];
+                $image = $_POST['image'];
+         $message_note = $_POST['message_note'];
 
+         $db = new connect_db();
+
+         $query = "UPDATE user_info SET full_name = '$full_name', email = '$email', contact = '$contact', date_of_birth = '$date_of_birth', address = '$address', image = '$image', message_note = '$message_note' WHERE id = $id ";
+         $data = $db->updateData($query);
+    }
+    
 ?>
 
 
@@ -119,7 +136,11 @@
                 </div>
                 <!-- Submit Button aligned to the right -->
                 <div class="col-md-6 text-end mt-4">
-                    <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+                    <?php if(isset($_GET['edit'])) { ?>
+                    <button type="submit" name="update" class="btn btn-primary">Update </button>
+                    <?php }else{ ?>
+                    <button type="submit" name="submit" class="btn btn-primary">save </button>
+                    <?php } ?>
                 </div>
             </div>
         </form>
