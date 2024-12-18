@@ -68,6 +68,59 @@
          $query = "UPDATE user_info SET full_name = '$full_name', email = '$email', contact = '$contact', date_of_birth = '$date_of_birth', address = '$address', image = '$image', message_note = '$message_note' WHERE id = $id ";
          $data = $db->updateData($query);
     }
+
+    // delete data from database 
+
+    if(isset($_GET['delete'])){
+        $id = $_GET['delete'];
+        $db = new connect_db();
+        $query = "DELETE FROM user_info WHERE id = $id";
+        $del = $db->deleteData($query);
+    }
+
+
+ 
+    
+
+
+
+
+
+
+
+
+
+
+    if (isset($_GET['profileData'])) {
+        $id = (int)$_GET['profileData']; // Ensure the ID is an integer
+    
+        // Instantiate the database class
+        $db = new connect_db();
+    
+        // Query to fetch the user data
+        $query = "SELECT full_name, email, contact, address FROM user_info WHERE id = $id";
+        print "<pre>";
+        print_r( $query);
+        die;
+        $data = $db->fetchSingle($query);
+    
+        // Return JSON response
+        if ($data) {
+            echo json_encode([
+                'success' => true,
+                'full_name' => $data['full_name'],
+                'email' => $data['email'],
+                'contact' => $data['contact'],
+                'address' => $data['address']
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No data found.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+    }
+
+
     
 ?>
 
@@ -194,12 +247,21 @@
                     <td>
                         <img src="images/<?php echo $row['image']; ?>" alt="User Image" width="50" height="50">
                     </td>
-                    <td>
+                    <td class="d-flex">
                        <a href="index.php?edit=<?php echo $row['id']; ?>"  class="btn btn-success btn-sm me-1">
                             <i class="bi bi-pencil-square"></i>
                        </a>
-                       <a href="index.php?viewProfile<?php echo $row['id']; ?>"  class="btn btn-primary btn-sm me-1"> <i class="bi bi-eye"></i></a>
-                       <a href="index.php?delete<?php echo $row['id']; ?>"  class="btn btn-danger btn-sm">
+                     
+                       <a href="#" 
+                        class="btn btn-primary btn-sm me-1" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#viewProfileModal" 
+                        onclick="loadProfileData(<?php echo $row['id']; ?>)">
+                        <i class="bi bi-eye"></i>
+                        </a>
+
+
+                       <a href="index.php?delete=<?php echo $row['id']; ?>"  class="btn btn-danger btn-sm">
                          <i class="bi bi-trash"></i>
                         </a>
                        
@@ -249,3 +311,87 @@
 
 </body>
 </html>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewProfileModalLabel">Profile Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Profile Table -->
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Field</th>
+              <th scope="col">Details</th>
+            </tr>
+          </thead>
+          <tbody id="profileData">
+            <!-- Dynamic content will be injected here -->
+            <tr>
+              <td colspan="2" class="text-center">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    function loadProfileData(userId) {
+        
+        fetch(`/php_crud_project/getProfileData.php?profileData=${userId}`);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Build table rows dynamically
+                const profileData = `
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td>${data.full_name}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td>${data.email}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phone</strong></td>
+                        <td>${data.contact}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Address</strong></td>
+                        <td>${data.address}</td>
+                    </tr>
+                `;
+                document.getElementById('profileData').innerHTML = profileData;
+            } else {
+                document.getElementById('profileData').innerHTML = `
+                    <tr>
+                        <td colspan="2" class="text-danger text-center">${data.message}</td>
+                    </tr>
+                `;
+            }
+        })
+        .catch(error => {
+            document.getElementById('profileData').innerHTML = `
+                <tr>
+                    <td colspan="2" class="text-danger text-center">Error loading data.</td>
+                </tr>
+            `;
+            console.error('Error:', error);
+        });
+}
+
+</script>
+

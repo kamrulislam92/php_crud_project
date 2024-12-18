@@ -46,8 +46,25 @@ class connect_db {
            header("Location: index.php?msg=".urlencode('Data upadeted successfully done'));
         }
     } 
+
+     // delete data for function
+    public function deleteData($deleteData){
+        $result = $this->connect->query($deleteData);
+        if($result){
+            header("Location: index.php?msg=".urlencode('Data delete successfully!'));
+         }
+    }
+
+    public function profileDataView($query) {
+        $result = $this->connect->query($query);
+        return $result->num_rows > 0 ? $result : false;
+    }
+
+
+
 }
 
 
-
 ?>
+
+
