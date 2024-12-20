@@ -55,10 +55,12 @@ class connect_db {
          }
     }
 
-    public function profileDataView($query) {
-        $result = $this->connect->query($query);
-        return $result->num_rows > 0 ? $result : false;
-    }
+    // public function editData($query) {
+    //     $result = $this->connect->query($query);
+    //     return $result && $result->num_rows > 0 ? $result->fetch_assoc() : false;
+    // }
+    
+    
 
 
 

@@ -79,6 +79,57 @@
     }
 
 
+ 
+    
+
+
+
+
+
+
+
+
+
+
+   
+    // Database connection
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "php_oop_crud_db";
+    
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    // Check connection
+    if ($conn->connect_error) {
+        die(json_encode(["error" => "Database connection failed"]));
+    }
+    
+    // Fetch user ID from the GET request
+    $user_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    
+    if ($user_id > 0) {
+        $stmt = $conn->prepare("SELECT full_name, email, address, contact, date_of_birth, image, message_note FROM user_info WHERE id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            $data = $result->fetch_assoc();
+            echo json_encode($data);
+        } else {
+            echo json_encode(["error" => "User not found"]);
+        }
+    
+        $stmt->close();
+    } else {
+        echo json_encode(["error" => "Invalid user ID"]);
+    }
+    
+    $conn->close();
+    
+    
+
 
     
 ?>
@@ -100,65 +151,64 @@
 <div class="container">
 
 
-
     <!-- Form Section -->
-        <div class="form-container">
-            <h2 class="text-center"> Contact Form</h2>
-            <div class="row">
-                <samp>
-                <?php if(isset($_GET['msg'])){
-                        echo "" .$_GET['msg'];
-                    }
-                ?>
-                </samp>
-            </div>
-            <form action="#" method="POST" enctype="multipart/form-data">
-                <div class="row">
-                    <!-- Name Field -->
-                    <div class="col-md-6 mb-3">
-                        <input type="text" class="form-control" value="<?php if(isset($_GET['edit'])) echo $data['full_name']; ?>" id="name" name="full_name" placeholder="Full Name" required>
-                        <input type="hidden" value="<?php if(isset($_GET['edit'])) echo $data['id']; ?>" name="id">
-                    </div>
-
-                    <!-- Email Field -->
-                    <div class="col-md-6 mb-3">
-                        <input type="email" class="form-control" value="<?php if(isset($_GET['edit'])) echo $data['email']; ?>" id="email" name="email" placeholder="Email Address" required>
-                    </div>
-
-                    <!-- Phone Field -->
-                    <div class="col-md-6 mb-3">
-                        <input type="number" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['contact']; ?>" id="phone" name="contact" placeholder="Phone Number" required>
-                    </div>
-
-                    <!-- Date of Birth Field -->
-                    <div class="col-md-6 mb-3">
-                        <input type="date" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['date_of_birth']; ?>" id="dob" name="date_of_birth" placeholder="Date of Birth" required>
-                    </div>
-
-                    <!-- Age Field -->
-                    <div class="col-md-6 mb-3">
-                        <input type="text" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['address']; ?>" id="address" name="address" placeholder="address" required>
-                    </div>
-                    <!-- File Upload Field -->
-                    <div class="col-md-6 mb-3">
-                        <input type="file" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['image']; ?>" id="file" name="image" accept="image/*" placeholder="Upload Image" required>
-                    </div>
-                    <!-- Message Field -->
-                    <div class="col-md-6 mb-3">
-                        <textarea class="form-control" id="message" name="message_note" rows="2" placeholder="Message" required><?php if(isset($_GET['edit'])) echo $data['message_note']; ?></textarea>
-                    </div>
-                    <!-- Submit Button aligned to the right -->
-                    <div class="col-md-6 text-end mt-4">
-                        <?php if(isset($_GET['edit'])) { ?>
-                        <button type="submit" name="update" class="btn btn-primary">Update </button>
-                        <?php }else{ ?>
-                        <button type="submit" name="submit" class="btn btn-primary">save </button>
-                        <?php } ?>
-                    </div>
-                </div>
-            </form>
+    <div class="form-container">
+        <h2 class="text-center"> Contact Form</h2>
+        <div class="row">
+            <samp>
+            <?php if(isset($_GET['msg'])){
+                    echo "" .$_GET['msg'];
+                }
+            ?>
+            </samp>
         </div>
-   
+        <form action="#" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <!-- Name Field -->
+                <div class="col-md-6 mb-3">
+                    <input type="text" class="form-control" value="<?php if(isset($_GET['edit'])) echo $data['full_name']; ?>" id="name" name="full_name" placeholder="Full Name" required>
+                    <input type="hidden" value="<?php if(isset($_GET['edit'])) echo $data['id']; ?>" name="id">
+                </div>
+
+                <!-- Email Field -->
+                <div class="col-md-6 mb-3">
+                    <input type="email" class="form-control" value="<?php if(isset($_GET['edit'])) echo $data['email']; ?>" id="email" name="email" placeholder="Email Address" required>
+                </div>
+
+                <!-- Phone Field -->
+                <div class="col-md-6 mb-3">
+                    <input type="number" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['contact']; ?>" id="phone" name="contact" placeholder="Phone Number" required>
+                </div>
+
+                <!-- Date of Birth Field -->
+                <div class="col-md-6 mb-3">
+                    <input type="date" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['date_of_birth']; ?>" id="dob" name="date_of_birth" placeholder="Date of Birth" required>
+                </div>
+
+                <!-- Age Field -->
+                <div class="col-md-6 mb-3">
+                    <input type="text" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['address']; ?>" id="address" name="address" placeholder="address" required>
+                </div>
+                <!-- File Upload Field -->
+                <div class="col-md-6 mb-3">
+                    <input type="file" class="form-control"value="<?php if(isset($_GET['edit'])) echo $data['image']; ?>" id="file" name="image" accept="image/*" placeholder="Upload Image" required>
+                </div>
+                <!-- Message Field -->
+                <div class="col-md-6 mb-3">
+                    <textarea class="form-control" id="message" name="message_note" rows="2" placeholder="Message" required><?php if(isset($_GET['edit'])) echo $data['message_note']; ?></textarea>
+                </div>
+                <!-- Submit Button aligned to the right -->
+                <div class="col-md-6 text-end mt-4">
+                    <?php if(isset($_GET['edit'])) { ?>
+                    <button type="submit" name="update" class="btn btn-primary">Update </button>
+                    <?php }else{ ?>
+                    <button type="submit" name="submit" class="btn btn-primary">save </button>
+                    <?php } ?>
+                </div>
+            </div>
+        </form>
+    </div>
+
    
 
     <!-- Table Section -->
@@ -212,17 +262,16 @@
                             <i class="bi bi-pencil-square"></i>
                        </a>
                      
-                       <!-- <a href="#" 
-                            class="btn btn-primary btn-sm me-1" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#viewProfileModal" 
-                            onclick="loadProfileData(<?php// echo $row['id']; ?>)">
-                            <i class="bi bi-eye"></i>
-                        </a> -->
-                        <a href="profile.php?view=<?php echo $row['id']; ?>"  class="btn btn-success btn-sm me-1">
-                        <i class="bi bi-eye"></i>
-                       </a>
-                      
+                       <a href="#" 
+   class="btn btn-primary btn-sm me-1" 
+   data-bs-toggle="modal" 
+   data-bs-target="#viewProfileModal" 
+   onclick="loadProfileData(<?php echo $row['id']; ?>)">
+   <i class="bi bi-eye"></i>
+</a>
+
+
+
                        <a href="index.php?delete=<?php echo $row['id']; ?>"  class="btn btn-danger btn-sm">
                          <i class="bi bi-trash"></i>
                         </a>
@@ -265,13 +314,6 @@
             </ul>
         </nav>
     </div>
-
-
-
-
-
-
-
 </div>
 
 <!-- Bootstrap JS (for functionality if needed) -->
