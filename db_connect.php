@@ -28,7 +28,15 @@ class connect_db {
             return false;
         }
     }
-
+// pagination data 
+public function pagination($data){
+    $result = $this->connect->query($data);
+    if($result->num_rows> 0){
+        return $result;
+    }else{
+        return false;
+    }
+}
     // edit function data for view 
     public function editData($edit){
         $result = $this->connect->query($edit);
